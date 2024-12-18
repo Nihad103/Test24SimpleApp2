@@ -6,7 +6,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class PostRepository(private val postInterface: PostInterface) {
-     suspend fun getPost(id: Int) : Response<ModelClass> {
+    suspend fun getPost(id: Int) : Response<ModelClass> {
         return withContext(Dispatchers.IO) {
             postInterface.getData(id)
         }

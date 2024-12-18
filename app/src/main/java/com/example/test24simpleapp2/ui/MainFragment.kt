@@ -40,30 +40,38 @@ class MainFragment : Fragment() {
             binding.progressBar.visibility = View.VISIBLE
             binding.errorTextView.visibility = View.GONE
             binding.recyclerView.visibility = View.GONE
-            viewModel.data.observe(viewLifecycleOwner, Observer { data ->
-                if (data.isEmpty()) {
-                    binding.errorTextView.visibility = View.VISIBLE
-                    binding.recyclerView.visibility = View.GONE
-                } else {
-                    binding.recyclerView.adapter = RecyclerAdapter(data) { postId ->
-                        val action = MainFragmentDirections.actionMainFragmentToDetailsFragment(postId)
-                        findNavController().navigate(action)
+            try {
+                viewModel.data.observe(viewLifecycleOwner, Observer { data ->
+                    if (data.isEmpty()) {
+                        binding.errorTextView.visibility = View.VISIBLE
+                        binding.recyclerView.visibility = View.GONE
+                    } else {
+                        binding.recyclerView.adapter = RecyclerAdapter(data) { postId ->
+                            val action =
+                                MainFragmentDirections.actionMainFragmentToDetailsFragment(postId)
+                            findNavController().navigate(action)
+                        }
+                        binding.recyclerView.visibility = View.VISIBLE
+                        binding.errorTextView.visibility = View.GONE
                     }
-                    binding.recyclerView.visibility = View.VISIBLE
-                    binding.errorTextView.visibility = View.GONE
-                }
-                binding.progressBar.visibility = View.GONE
-            })
-            viewModel.errorMsg.observe(viewLifecycleOwner, Observer { error ->
-                error?.let {
                     binding.progressBar.visibility = View.GONE
-                    binding.recyclerView.visibility = View.GONE
-                    binding.errorTextView.visibility = View.VISIBLE
-                    binding.errorTextView.text = it
-                }
-            })
-            Log.d("MainFragment", "fetchAllData")
-            viewModel.fetchAllData()
+                })
+                viewModel.errorMsg.observe(viewLifecycleOwner, Observer { error ->
+                    error?.let {
+                        binding.progressBar.visibility = View.GONE
+                        binding.recyclerView.visibility = View.GONE
+                        binding.errorTextView.visibility = View.VISIBLE
+                        binding.errorTextView.text = it
+                    }
+                })
+                Log.d("MainFragment", "fetchAllData")
+                viewModel.fetchAllData()
+            } catch (e: Exception) {
+                binding.errorTextView.text = "Error: ${e.message}"
+                binding.errorTextView.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.GONE
+                Log.e("MainFragment", "Exception: ${e.message}")
+            }
         } else {
             binding.errorTextView.text = "No internet connection"
             binding.errorTextView.visibility = View.VISIBLE

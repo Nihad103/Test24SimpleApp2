@@ -53,6 +53,23 @@ class DetailsFragment : Fragment() {
                 }
                 binding.progressBar.visibility = View.GONE
             })
+            viewModel.errorMsg.observe(viewLifecycleOwner, Observer { error ->
+                error?.let {
+                    binding.progressBar.visibility = View.GONE
+                    binding.linerLayout.visibility = View.GONE
+                    binding.errorTextView.visibility = View.VISIBLE
+                    binding.errorTextView.text = it
+                }
+            })
+//            viewModel.isLoading.observe(viewLifecycleOwner, Observer { loading ->
+//                if (loading == true) {
+//                    binding.progressBar.visibility = View.GONE
+//                    binding.cardView.visibility = View.GONE
+//                    binding.errorTextView.visibility = View.GONE
+//                } else {
+//                    binding.progressBar.visibility = View.GONE
+//                }
+//            })
             viewModel.fetchData(postId, postId)
         } else {
             binding.errorTextView.text = "No internet connection"
