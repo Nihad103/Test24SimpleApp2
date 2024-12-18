@@ -27,7 +27,6 @@ class RecyclerAdapter(
         holder.binding.titleTextView.text = itemList[position].title
         holder.binding.titleTextView.setOnClickListener {
             val item = itemList[position].id
-            Toast.makeText(holder.itemView.context, "Click ${item}", Toast.LENGTH_SHORT).show()
             onItemClicked(item)
         }
     }

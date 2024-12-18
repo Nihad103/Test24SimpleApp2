@@ -12,6 +12,7 @@ import retrofit2.Response
 
 class MyViewModel(private val postRepository: PostRepository) : ViewModel() {
     val data = MutableLiveData<List<ModelClass>>()
+    val errorMsg = MutableLiveData<String?>()
 
     fun fetchAllData() {
         viewModelScope.launch {
@@ -56,5 +57,4 @@ class MyViewModel(private val postRepository: PostRepository) : ViewModel() {
 
         }
     }
-
 }
