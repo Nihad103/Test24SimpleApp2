@@ -17,6 +17,7 @@ class MyViewModel(private val postRepository: PostRepository) : ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
 
     fun fetchAllData() {
+        isLoading.value = true
         viewModelScope.launch {
             runCatching {
                 try {
@@ -35,19 +36,24 @@ class MyViewModel(private val postRepository: PostRepository) : ViewModel() {
                         id++
                     }
                     data.value = allData
+                    isLoading.value = false
                 } catch (e: HttpException) {
                     Log.d("MyViewModel", "error")
                     e.printStackTrace()
+                    isLoading.value = false
+                    errorMsg.value = e.message
                 }
             }.onFailure {
                 it.printStackTrace()
                 Log.d("MyViewModel", "onFailure")
                 isLoading.value = false
+                errorMsg.value = it.message
             }
         }
     }
 
     fun fetchData(startId: Int, endId: Int) {
+        isLoading.value = true
         viewModelScope.launch {
             runCatching {
                 try {
@@ -61,12 +67,16 @@ class MyViewModel(private val postRepository: PostRepository) : ViewModel() {
                         }
                     }
                     data.value = allData
+                    isLoading.value = false
                 } catch (e: Exception) {
                     e.printStackTrace()
+                    isLoading.value = false
+                    errorMsg.value = e.message
                 }
             }.onFailure {
                 it.printStackTrace()
                 Log.d("MyViewModel", "onFailureDetails")
+                errorMsg.value = it.message
                 isLoading.value = false
             }
         }
