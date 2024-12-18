@@ -72,6 +72,7 @@ class DetailsFragment : Fragment() {
 //            })
             viewModel.fetchData(postId, postId)
         } else {
+
             binding.errorTextView.text = "No internet connection"
             binding.errorTextView.visibility = View.VISIBLE
             binding.titleTextView.visibility = View.GONE
