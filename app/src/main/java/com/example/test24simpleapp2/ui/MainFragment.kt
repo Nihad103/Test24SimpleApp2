@@ -17,13 +17,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.test24simpleapp2.adapter.RecyclerAdapter
 import com.example.test24simpleapp2.databinding.FragmentMainBinding
 import com.example.test24simpleapp2.viewModel.MyViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.ext.android.inject
 
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: MyViewModel by viewModel()
+    private val viewModel: MyViewModel by inject()
     private lateinit var connectivityManager: ConnectivityManager
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
@@ -49,6 +49,8 @@ class MainFragment : Fragment() {
         networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 activity?.runOnUiThread {
+                    binding.errorTextView.visibility = View.GONE
+                    binding.progressBar.visibility = View.VISIBLE
                     fetchData()
                 }
             }
@@ -60,7 +62,11 @@ class MainFragment : Fragment() {
             }
         }
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
-        fetchData()
+        if (isOnline(requireContext())) {
+            fetchData()
+        } else {
+            showError("No internet connection")
+        }
     }
 
     private fun fetchData() {
@@ -84,21 +90,22 @@ class MainFragment : Fragment() {
                 }
                 binding.progressBar.visibility = View.GONE
             })
-            viewModel.errorMsg.observe(viewLifecycleOwner, Observer { error ->
-                error?.let {
-                    binding.progressBar.visibility = View.GONE
-                    binding.recyclerView.visibility = View.GONE
-                    binding.errorTextView.visibility = View.VISIBLE
-                    binding.errorTextView.text = it
-                }
-            })
+//            viewModel.errorMsg.observe(viewLifecycleOwner, Observer { error ->
+//                binding.progressBar.visibility = View.VISIBLE
+//                error?.let {
+//                    binding.progressBar.visibility = View.GONE
+//                    binding.recyclerView.visibility = View.GONE
+//                    binding.errorTextView.visibility = View.VISIBLE
+//                    binding.errorTextView.text = "Something went wrong"
+//                }
+//            })
             Log.d("MainFragment", "fetchAllData")
             viewModel.fetchAllData()
         } catch (e: Exception) {
-            binding.errorTextView.text = "Error: ${e.message}"
+            binding.errorTextView.text = "Exception. Something went wrong"
             binding.errorTextView.visibility = View.VISIBLE
             binding.progressBar.visibility = View.GONE
-            Log.e("MainFragment", "Exception: ${e.message}")
+            Log.e("MainFragment", "Exception. Something went wrong")
         }
     }
 
@@ -107,6 +114,14 @@ class MainFragment : Fragment() {
         binding.errorTextView.text = message
         binding.errorTextView.visibility = View.VISIBLE
         binding.recyclerView.visibility = View.GONE
+    }
+
+    private fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val capabilities =
+            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 
     override fun onDestroyView() {

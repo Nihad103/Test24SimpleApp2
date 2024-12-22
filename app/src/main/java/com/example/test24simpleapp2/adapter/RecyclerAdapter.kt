@@ -2,7 +2,6 @@ package com.example.test24simpleapp2.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test24simpleapp2.databinding.ItemViewBinding
 import com.example.test24simpleapp2.model.ModelClass
