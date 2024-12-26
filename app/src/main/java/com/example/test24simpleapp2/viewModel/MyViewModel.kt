@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.test24simpleapp2.model.ModelClass
 import com.example.test24simpleapp2.service.PostRepository
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import retrofit2.Response
 
